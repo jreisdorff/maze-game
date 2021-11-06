@@ -10,18 +10,17 @@ export default function Home() {
   const [guy, setGuy] = useState([0, 0]);
   const [otherGuy, setOtherGuy] = useState([0, 0]);
   const [keyLocation, setKeyLocation] = useState([0, 0]);
+  const [guysPastLocations, setGuysPastLocations] = useState([]);
+  const [otherGuysPastLocations, setOtherGuysPastLocations] = useState([]);
 
   useEffect(() => {
     if (builder) {
-    const interval = setInterval(() => startRace(), 50);
+      const interval = setInterval(() => startRace(), 50);
     return () => {
     clearInterval(interval);
     };
   }
   }, [builder]);
-
-  const [guysPastLocations, setGuysPastLocations] = useState([]);
-  const [otherGuysPastLocations, setOtherGuysPastLocations] = useState([]);
 
   if (builder && isFirstTime) {
     const mazeKeyObject = builder.placeKey();
@@ -36,7 +35,7 @@ export default function Home() {
   const startRace = () => {
     let tempBuilder = JSON.parse(JSON.stringify(builder));
     const availableMoves = getAvailableMoves(guy);
-    if (availableMoves.length === 0) {
+    if (availableMoves.length === 0 && guysPastLocations.length > 0) {
       // need to move back
       tempBuilder = movePlayer(
         tempBuilder,
@@ -46,7 +45,7 @@ export default function Home() {
         guysPastLocations[guysPastLocations.length - 1][1],
         true
       );
-    } else {
+    } else if (availableMoves.length > 0) {
       const randomMove =
         availableMoves[Math.floor(Math.random() * availableMoves.length)];
       tempBuilder = movePlayer(
@@ -57,21 +56,22 @@ export default function Home() {
         randomMove[1],
         false
       );
+    } else {
+
     }
-    const otherGuysMoves = getAvailableMoves(otherGuy);
-    if (otherGuysMoves.length === 0) {
+    const otherGuysAvailableMoves = getAvailableMoves(otherGuy);
+    if (otherGuysAvailableMoves.length === 0 && otherGuysPastLocations.length > 0) {
       tempBuilder = movePlayer(
         tempBuilder,
         otherGuy,
         "other_guy",
-        otherGuysPastLocations.length === 0 ? 0 : otherGuysPastLocations[otherGuysPastLocations.length - 1][0],
-        otherGuysPastLocations.length === 0 ? 0 : otherGuysPastLocations[otherGuysPastLocations.length - 1][1],
-        true,
-        otherGuysPastLocations.length === 0 ? true : false,
+        otherGuysPastLocations[otherGuysPastLocations.length - 1][0],
+        otherGuysPastLocations[otherGuysPastLocations.length - 1][1],
+        true
       );
-    } else {
+    } else if (otherGuysAvailableMoves.length > 0) {
       const randomMove =
-        otherGuysMoves[Math.floor(Math.random() * otherGuysMoves.length)];
+        otherGuysAvailableMoves[Math.floor(Math.random() * otherGuysAvailableMoves.length)];
       tempBuilder = movePlayer(
         tempBuilder,
         otherGuy,
@@ -98,7 +98,8 @@ export default function Home() {
       moveX >= 0 &&
       moveY >= 0 &&
       moveX < builder.maze.length &&
-      moveY < builder.maze[moveX].length
+      moveY < builder.maze[moveX].length &&
+      (builder.maze[moveX][moveY].includes('key') || builder.maze[moveX][moveY].length === 0)
     ) {
       availableMoves.push([moveX, moveY]);
     }
@@ -111,7 +112,8 @@ export default function Home() {
       moveX >= 0 &&
       moveY >= 0 &&
       moveX < builder.maze.length &&
-      moveY < builder.maze[moveX].length 
+      moveY < builder.maze[moveX].length &&
+      (builder.maze[moveX][moveY].includes('key') || builder.maze[moveX][moveY].length === 0)
     ) {
       availableMoves.push([moveX, moveY]);
     }
@@ -124,7 +126,8 @@ export default function Home() {
       moveX >= 0 &&
       moveY >= 0 &&
       moveX < builder.maze.length &&
-      moveY < builder.maze[moveX].length
+      moveY < builder.maze[moveX].length &&
+      (builder.maze[moveX][moveY].includes('key') || builder.maze[moveX][moveY].length === 0)
     ) {
       availableMoves.push([moveX, moveY]);
     }
@@ -137,7 +140,8 @@ export default function Home() {
       moveX >= 0 &&
       moveY >= 0 &&
       moveX < builder.maze.length &&
-      moveY < builder.maze[moveX].length
+      moveY < builder.maze[moveX].length &&
+      (builder.maze[moveX][moveY].includes('key') || builder.maze[moveX][moveY].length === 0)
     ) {
       availableMoves.push([moveX, moveY]);
     }
@@ -151,14 +155,8 @@ export default function Home() {
     playerName,
     displacementX,
     displacementY,
-    movingBack,
-    skip
+    movingBack
   ) => {
-    if (skip) {
-      return;
-    }
-
-    console.log([displacementX, displacementY], keyLocation);
 
     if (displacementX == keyLocation[0] && displacementY == keyLocation[1]) {
       if (playerName === "guy") // red 
@@ -170,12 +168,12 @@ export default function Home() {
       return;
     }
 
-    tempBuilder.maze[player[0]][player[1]] = ["door"];
+    tempBuilder.maze[player[0]][player[1]] = ['door'];
 
     if (playerName === "guy") {
       let tempGuysPastLocations = guysPastLocations.slice();
       if (movingBack) {
-        if (!(tempGuysPastLocations === 1))
+        if (!(tempGuysPastLocations.length === 1))
         {
           tempGuysPastLocations.pop();
         }
@@ -187,7 +185,7 @@ export default function Home() {
     } else {
       let tempOtherGuysPastLocations = otherGuysPastLocations.slice();
       if (movingBack) {
-        if (!(tempOtherGuysPastLocations === 1))
+        if (!(tempOtherGuysPastLocations.length === 1))
         {
           tempOtherGuysPastLocations.pop();
         }
