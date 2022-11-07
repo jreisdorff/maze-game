@@ -208,7 +208,7 @@ export default function Home() {
       } else {
         window.alert("blue player wins");
       }
-      resetBoard();
+      setIsFirstTime(true);
 
       return;
     }
@@ -243,6 +243,13 @@ export default function Home() {
     tempBuilder.maze[displacementX][displacementY] = [playerName];
     return tempBuilder;
   };
+
+  useEffect(() => {
+    if (isFirstTime) {
+      resetBoard();
+      setIsFirstTime(false);
+    }
+  }, [isFirstTime]);
 
   return (
     <>
