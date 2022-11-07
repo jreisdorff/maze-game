@@ -253,7 +253,11 @@ export default function Home() {
           <link rel="icon" href="/favicon.ico" />
         </Head>
 
-        <Script id="maze-js" src="static/maze.js" onLoad={() => loadBoard()} />
+        <Script
+          id="maze-js"
+          src="../static/maze.js"
+          onLoad={() => loadBoard()}
+        />
       </div>
       <div
         style={{
