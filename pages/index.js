@@ -3,6 +3,9 @@ import styles from "../styles/Home.module.css";
 import mazeStyles from "../styles/Maze.module.css";
 import Script from "next/script";
 import { useEffect, useState } from "react";
+const path = require("path");
+
+const mazeSrcPath = path.join(__dirname, "../../../static/", "maze.js");
 
 export default function Home() {
   const [builder, setBuilder] = useState(null);
@@ -253,11 +256,7 @@ export default function Home() {
           <link rel="icon" href="/favicon.ico" />
         </Head>
 
-        <Script
-          id="maze-js"
-          src="../static/maze.js"
-          onLoad={() => loadBoard()}
-        />
+        <Script id="maze-js" src={mazeSrcPath} onLoad={() => loadBoard()} />
       </div>
       <div
         style={{
