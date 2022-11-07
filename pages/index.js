@@ -247,6 +247,8 @@ export default function Home() {
     return tempBuilder;
   };
 
+  console.log(mazeSrcPath);
+
   return (
     <>
       <div className={styles.container}>
