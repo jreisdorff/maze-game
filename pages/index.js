@@ -1,13 +1,8 @@
 import Head from "next/head";
+import { useEffect, useState } from "react";
+import * as mazeSrc from "../static/maze";
 import styles from "../styles/Home.module.css";
 import mazeStyles from "../styles/Maze.module.css";
-import Script from "next/script";
-import { useEffect, useState } from "react";
-const path = require("path");
-
-const mazeSrcPath = path.join(__dirname, "../../../static/", "maze.js");
-
-const mazeSrc = require(mazeSrcPath);
 
 export default function Home() {
   const [builder, setBuilder] = useState(null);
@@ -22,7 +17,7 @@ export default function Home() {
   const [otherGuysOGLocation, setOtherGuysOGLocation] = useState([0, 0]);
 
   const loadBoard = () => {
-    const mazeBuilder = new MazeBuilder(14, 12);
+    const mazeBuilder = new mazeSrc.MazeBuilder(14, 12);
     setBuilder(mazeBuilder);
     const tempBuilder = mazeBuilder.placeKey();
     const coords = [tempBuilder.fr, tempBuilder.fc];
@@ -257,8 +252,6 @@ export default function Home() {
           <meta name="description" content="Reisdorff's Maze Game" />
           <link rel="icon" href="/favicon.ico" />
         </Head>
-
-        <Script id="maze-js" src={mazeSrc} onLoad={() => loadBoard()} />
       </div>
       <div
         style={{
@@ -273,19 +266,11 @@ export default function Home() {
       >
         <button
           onClick={() => {
-            startRace();
-          }}
-          style={{ marginBottom: "12px", fontSize: "24px" }}
-        >
-          Start
-        </button>
-        <button
-          onClick={() => {
             resetBoard();
           }}
           style={{ marginBottom: "12px", fontSize: "24px" }}
         >
-          Reset
+          Start
         </button>
         <div className={styles.maze_container}>
           {builder && builder.maze.length > 0 && (
